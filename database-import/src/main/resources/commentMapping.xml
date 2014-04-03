@@ -1,0 +1,30 @@
+<mapping>
+    <class name="io.spring.recommendation.domain.Comment">
+
+        <map-to xml="row" />
+
+        <field name="id" type="long">
+            <bind-xml name="Id" node="attribute" />
+        </field>
+
+        <field name="postId" type="long">
+            <bind-xml name="PostId" node="attribute" />
+        </field>
+
+        <field name="score" type="int">
+            <bind-xml name="Score" node="attribute" />
+        </field>
+
+        <field name="value" type="string">
+            <bind-xml name="Text" node="attribute" />
+        </field>
+
+        <field name="userId" type="long">
+            <bind-xml name="UserId" node="attribute" />
+        </field>
+
+        <field name="creationDate" type="java.util.Date">
+            <bind-xml name="CreationDate" node="attribute" />
+        </field>
+    </class>
+</mapping>

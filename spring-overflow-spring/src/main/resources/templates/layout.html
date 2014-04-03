@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<head>
+    <title>Spring Overflow</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/css/pagedown.css"/>
+    <link rel="stylesheet" href="/css/main.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div id="mainNav" class="navbar navbar-inverse navbar-static-top" role="navigation">
+        <div class="container">
+            <div class="row">
+                <div class="navbar-header col-md-2">
+                    <a href="/"><img src="/images/logo-spring-io.png" alt="Spring IO"/></a>
+                </div>
+                <div class="col-md-6">&nbsp;</div>
+                <div class="col-md-4 text-right">
+                    <a href="/login.html" th:href="@{/login}" sec:authorize="not hasRole('ROLE_AUTHENTICATED')">Login</a>
+                    <div class="col-md-6 text-right" sec:authentication="name" sec:authorize="hasRole('ROLE_AUTHENTICATED')">User</div>
+                    <div class="col-md-6 text-left" sec:authorize="hasRole('ROLE_AUTHENTICATED')">
+                        <form th:action="@{/logout}" method="post">
+                            <input type="submit" value="Logout" id="logout"/>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container" id="header">
+        <div class="row">
+            <h1 class="col-md-4">
+                <img src="/images/spring_logo.png"/><a href="/">Spring<em>Overflow</em></a>
+            </h1>
+        </div>
+    </div>
+    <div layout:fragment="content"/>
+    <footer class="footer">
+        <div class="container">
+            <div class="col-med-8">
+                <ul class="list-inline">
+                    <li><a href="/team">Team</a></li>
+                    <li><a href="/services">Services</a></li>
+                    <li><a href="/tools">Tools</a></li>
+                </ul>
+                &copy; <span>2014</span> <a href="http://gopivotal.com">Pivotal Software</a>, Inc. All Rights Reserved.
+                <a href="http://www.gopivotal.com/terms-of-use">Terms of Use</a> and
+                <a href="http://www.gopivotal.com/privacy-policy">Privacy</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

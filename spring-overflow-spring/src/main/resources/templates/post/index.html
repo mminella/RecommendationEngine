@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="layout">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+    <div layout:fragment="content" class="container" id="listContent">
+        <div class="row">
+            <h2 class="col-md-6">Most Recent Questions</h2>
+        </div>
+        <div class="row">
+            <div class="col-md-9">
+                <table id="listTable" class="table">
+                    <tbody>
+                    <tr th:each="post : ${page.content}">
+                        <td>
+                            <div>
+                                <div th:text="${post.voteCount}" class="text-center">1</div>
+                                <div>votes</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div th:class="${post.answerCount} > 0 ? 'answered' : 'text-danger'">
+                                <div th:text="${post.answerCount}" class="text-center">1</div>
+                                <div>answers</div>
+                            </div>
+                        </td>
+                        <td class="gray">
+                            <div th:text="${post.viewCount}" class="text-center">1</div>
+                            <div>views</div>
+                        </td>
+                        <td>
+                            <a class="bold" href="post/show.html" th:href="@{'/post/' + ${post.id}}" th:text="${post.title}">My Post</a>
+                            <div>
+                                <ul class="list-inline tags">
+                                    <li th:each="curTag : ${post.tags}" th:text="${curTag.tag}">My Tag</li>
+                                </ul>
+                                <div class="text-right gray" th:text="'asked by ' + ${post.ownerUser.displayName}">asked</div>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-3">&nbsp;</div>
+        </div>
+        <div th:include="fragments :: paginationbar"></div>
+    </div>
+</body>
+</html>

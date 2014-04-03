@@ -1,0 +1,62 @@
+<mapping>
+	<class name="io.spring.recommendation.domain.Post">
+
+		<map-to xml="row" />
+
+		<field name="id" type="long">
+			<bind-xml name="Id" node="attribute" />
+		</field>
+
+		<field name="postTypeId" type="java.lang.Integer">
+			<bind-xml name="PostTypeId" node="attribute" />
+		</field>
+
+		<field name="acceptedAnswerId" type="java.lang.Long">
+			<bind-xml name="AcceptedAnswerId" node="attribute" />
+		</field>
+
+        <field name="creationDate" type="java.util.Date">
+            <bind-xml name="CreationDate" node="attribute" />
+        </field>
+
+		<field name="score" type="java.lang.Integer">
+			<bind-xml name="Score" node="attribute" />
+		</field>
+
+		<field name="ownerUserId" type="long">
+			<bind-xml name="OwnerUserId" node="attribute" />
+		</field>
+
+        <field name="title" type="string">
+            <bind-xml name="Title" node="attribute" />
+        </field>
+
+        <field name="answerCount" type="int">
+            <bind-xml name="AnswerCount" node="attribute" />
+        </field>
+
+        <field name="commentCount" type="int">
+            <bind-xml name="CommentCount" node="attribute" />
+        </field>
+
+        <field name="viewCount" type="int">
+            <bind-xml name="ViewCount" node="attribute" />
+        </field>
+
+        <field name="favoriteCount" type="int">
+            <bind-xml name="FavoriteCount" node="attribute" />
+        </field>
+
+		<field name="body" type="string">
+			<bind-xml name="Body" node="attribute" />
+		</field>
+
+		<field name="tags" type="string">
+			<bind-xml name="Tags" node="attribute" />
+		</field>
+
+		<field name="parentId" type="java.lang.Long">
+			<bind-xml name="ParentId" node="attribute" />
+		</field>
+	</class>
+</mapping>

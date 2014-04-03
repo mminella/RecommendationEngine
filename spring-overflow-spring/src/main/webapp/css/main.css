@@ -1,0 +1,162 @@
+
+footer {
+    background-color: #34302d;
+    padding: 25px;
+    margin-top: 10px;
+    color: white;
+}
+
+footer > div.container {
+    margin: 0 0 0 130px;
+}
+
+footer li > a {
+    color: white;
+}
+
+footer li > a:hover {
+    color: rgb(109, 179, 63);
+    text-decoration: none;
+}
+
+footer a {
+    color: rgb(109, 179, 63);
+}
+
+footer a:hover {
+    color: rgb(109, 179, 63);
+}
+
+/* Nav styles */
+#mainNav {
+    min-height: 0px;
+    height: 34px;
+    color: white;
+}
+
+#mainNav img {
+    height: 27px;
+    padding: 0 0 3px 0;
+}
+
+#mainNav a {
+    line-height: 34px;
+    vertical-align: middle;
+    color: white;
+}
+
+#mainNav a:hover {
+    text-decoration: none;
+}
+
+/* Header styles */
+#header {
+    font-weight: lighter;
+    vertical-align: bottom;
+}
+
+#header em {
+    font-weight: bold;
+    font-style: normal;
+}
+
+#header img {
+    height: 60px;
+}
+
+#header a {
+    color: black;
+}
+
+#header a:hover {
+    text-decoration: none;
+}
+
+#listContent h2 {
+    font-size: 18px;
+}
+
+.answered {
+    background-color: #75845c;
+    color: white;
+    padding: 4px;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+#listTable td {
+    padding: 10px 5px;
+}
+
+.gray {
+    color: #888;
+}
+
+.tags {
+    margin: 10px 0 0 0;
+}
+
+.tags li {
+    background-color: #e0eaf1;
+    border-bottom: 1px solid #b3cee1;
+    border-right: 1px solid #b3cee1;
+    color: #4a6b82;
+}
+
+#questionDetails h1 {
+    font-size: 24px;
+    padding: 0 0 10px 0;
+    border-bottom: 1px solid #CCC;
+}
+
+.comment {
+    border-top: 1px dotted #CCC;
+    margin: 0 0 10px 0;
+}
+
+.comments {
+    border-bottom: 1px dotted #CCC;
+}
+
+.askuser {
+    background-color: #e0eaf1;
+    padding: 4px;
+    margin-bottom: 10px;
+}
+
+.answeruser {
+    padding: 4px;
+}
+
+.answer {
+    border-top: 1px solid #DDD;
+}
+
+.answers {
+    border-bottom: 1px solid #DDD;
+}
+
+#yourAnswer h1 {
+    border-bottom: none;
+}
+
+#submit {
+    background-color: black;
+    color: white;
+    box-shadow: 0 2px 1px rgba(0,0,0,0.3),0 1px 0 rgba(255,255,255,0.4) inset;
+    font-weight: bold;
+}
+
+#logout {
+    background: none;
+    border: none;
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#recommendations {
+    padding-bottom: 10px;
+}
