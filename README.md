@@ -18,6 +18,7 @@ The idea for this demo and help with some of the code came from the blog post [D
 2. **Spring XD installed** - This has been tested against the current SNAPSHOT of Spring XD as of the writing of this document.  *It needs the code in Spring XD's PR 729 [PR 729](https://github.com/spring-projects/spring-xd/pull/729) or equivelant to work*.
 3. **A database** - The SQL script provided and the POM file's dependencies are set up for MySQL, but there is nothing code specific that would prevent you from updating the scripts and dropping in a new driver.
 4. **The StackOverflow Data** - The data used in this project comes from the quarterly dump of StackExcahnge's data.  You can find a link to the torrent to download it here: [StackExchange Data](https://archive.org/details/stackexchange) and information about the schema of the data here: [StackExchange data schema](http://meta.stackoverflow.com/questions/2677/database-schema-documentation-for-the-public-data-dump-and-sede).
+5. **Configure the database connection** - The below instructions assume you have updated the two application.properties files in this project to point to your MySql instance.  The location of those two properties files are: database-import/src/main/resources and spring-overflow-spring/src/main/resources.
 
 #### Potential cleanup before process
 ---
