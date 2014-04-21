@@ -40,7 +40,7 @@ If you've run this project before, you'll need to do a bit of cleanup.  Specific
 Before running the website or the job, you'll need to download and import the data.  The data is provided via XML files that will be imported via a [Spring Batch](http://spring.io/projects/spring-batch) job.
 
 1. Build the project by running `$ mvn package` from the root of the repository (same place this file is located).
-2. Execute the job via the command `$ java -jar database-import/target/database-import-1.0-SNAPSHOT.jar`.  This will create the database tables used by the website as well as import the XML data into them.
+2. Execute the job via the command `$ java -jar database-import/target/database-import-1.0-SNAPSHOT.jar importDirectory=<IMPORT_LOCATION>`.  <IMPORT_LOCATION> is the location of the StackOverflow XML files.  This directory should contain at least the Votes.xml, Users.xml, Posts.xml, PostHistory.xml, and Comments.xml (no other data is used for this demo).  This will create the database tables used by the website as well as import the XML data into them.
 3. With the data imported, you can either run the website and take a look around or begin processing the data for the recommendation engine.
 
 ** Troubleshooting **
