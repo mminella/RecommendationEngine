@@ -5,20 +5,20 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
                     http://www.springframework.org/schema/beans/spring-beans.xsd
                     http://www.springframework.org/schema/hadoop
-                    http://www.springframework.org/schema/hadoop/spring-hadoop-2.0.xsd
+                    http://www.springframework.org/schema/hadoop/spring-hadoop.xsd
 					http://www.springframework.org/schema/batch
-	                http://www.springframework.org/schema/batch/spring-batch-2.2.xsd">
+	                http://www.springframework.org/schema/batch/spring-batch.xsd">
 
-	<hdp:configuration>
-		fs.default.name=hdfs://localhost:54310
+	<hdp:configuration register-url-handler="false" properties-location="${xd.config.home}/hadoop.properties">
+		fs.default.name=${spring.hadoop.fsUri}
 	</hdp:configuration>
 
-	<hdp:tool-tasklet id="mahout-tasklet" jar="file:/usr/local/Cellar/springxd/1.0.0.M5/libexec/xd/modules/job/recommender/lib/mahout-core-0.9.jar"
+	<hdp:tool-tasklet id="mahout-tasklet" jar="${xd.module.home}/job/recommender/lib/mahout-core-0.9.jar"
 					 tool-class="org.apache.mahout.cf.taste.hadoop.similarity.item.ItemSimilarityJob">
-		<hdp:arg value="-i/xd/hdfsImport/hdfsImport-1.csv"/>
+		<hdp:arg value="-i/xd/hdfsImport"/>
 		<hdp:arg value="-o/xd/hdfsImport/postsResults"/>
 		<hdp:arg value="-sSIMILARITY_COOCCURRENCE"/>
-		<hdp:arg value="-booleanData=true"/>
+		<hdp:arg value="-booleanData=false"/>
 	</hdp:tool-tasklet>
 
  	<job id="job" xmlns="http://www.springframework.org/schema/batch">

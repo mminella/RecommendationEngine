@@ -119,6 +119,6 @@ public class PostController {
 		model.addAttribute("post", parentPost);
 		model.addAttribute("recommendations", recommendedPosts);
 
-		return "/post/show";
+		return "post/show";
 	}
 }
