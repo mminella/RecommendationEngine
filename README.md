@@ -32,7 +32,8 @@ If you've run this project before, you'll need to do a bit of cleanup.  Specific
     mysql> create database recommendation_test;    
     ```
     
-** Troubleshooting **
+**Troubleshooting**
+
 *Unable to delete directories due to Hadoop being in safe mode* - Execute the command: `$ hadoop dfsadmin -safemode leave`
 
 #### Import of StackOverflow data
@@ -43,7 +44,7 @@ Before running the website or the job, you'll need to download and import the da
 2. Execute the job via the command `$ java -jar database-import/target/database-import-1.0-SNAPSHOT.jar importDirectory=<IMPORT_LOCATION>`.  <IMPORT_LOCATION> is the location of the StackOverflow XML files.  This directory should contain at least the Votes.xml, Users.xml, Posts.xml, PostHistory.xml, and Comments.xml (no other data is used for this demo).  This will create the database tables used by the website as well as import the XML data into them.
 3. With the data imported, you can either run the website and take a look around or begin processing the data for the recommendation engine.
 
-** Troubleshooting **
+**Troubleshooting**
 
 *Unable to connect to the database* - Update the values in the application.properties file located in database-import/src/main/resources to be correct for your database instance.
 
