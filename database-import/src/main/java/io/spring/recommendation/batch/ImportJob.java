@@ -22,6 +22,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.concurrent.ConcurrentMapCache;
+import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -31,8 +35,10 @@ import org.springframework.oxm.castor.CastorMarshaller;
 
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.util.Arrays;
 
 @Configuration
+@EnableCaching
 @EnableAutoConfiguration
 @EnableBatchProcessing
 public class ImportJob {
@@ -42,6 +48,13 @@ public class ImportJob {
 
 	@Autowired
 	private StepBuilderFactory steps;
+
+	@Bean
+	CacheManager cacheManager() {
+		SimpleCacheManager manager = new SimpleCacheManager();
+		manager.setCaches(Arrays.asList(new ConcurrentMapCache("tag")));
+		return manager;
+	}
 
 	@Bean
 	@StepScope
@@ -165,7 +178,7 @@ public class ImportJob {
 	@Bean
 	protected Step step3(DataSource dataSource) throws Exception {
 		return this.steps.get("step3")
-					   .<Vote, Vote> chunk(100)
+					   .<Vote, Vote> chunk(1000)
 					   .reader(voteItemReader(null))
 					   .writer(votesItemWriter(dataSource))
 					   .faultTolerant()
@@ -214,7 +227,7 @@ public class ImportJob {
 	@Bean
 	protected Step step4(DataSource dataSource) throws Exception {
 		return this.steps.get("step4")
-					   .<Comment, Comment> chunk(100)
+					   .<Comment, Comment> chunk(1000)
 					   .reader(commentItemReader(null))
 					   .writer(commentItemWriter(dataSource))
 					   .faultTolerant()
