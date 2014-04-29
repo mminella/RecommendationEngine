@@ -5,6 +5,8 @@ import io.spring.recommendation.domain.Comment;
 import io.spring.recommendation.domain.Post;
 import io.spring.recommendation.domain.User;
 import io.spring.recommendation.domain.Vote;
+import io.spring.recommendation.service.TagService;
+import io.spring.recommendation.service.TagServiceImpl;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -95,6 +97,14 @@ public class ImportJob {
 	}
 
 	@Bean
+	protected TagService tagService(DataSource dataSource) {
+		TagServiceImpl service = new TagServiceImpl();
+		service.setDataSource(dataSource);
+
+		return service;
+	}
+
+	@Bean
 	@StepScope
 	protected ItemStreamReader<Post> postItemReader(@Value("#{jobParameters[importDirectory]}") String importDirectory) throws IOException{
 		CastorMarshaller marshaller = new CastorMarshaller();
@@ -122,6 +132,7 @@ public class ImportJob {
 
 		PostItemWriter writer = new PostItemWriter();
 		writer.setDelegate(delegate, dataSource);
+		writer.setTagService(tagService(dataSource));
 
 		return writer;
 	}

@@ -1,19 +1,14 @@
 package io.spring.recommendation.batch.writer;
 
 import io.spring.recommendation.domain.Post;
+import io.spring.recommendation.service.TagService;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -23,6 +18,11 @@ public class PostItemWriter implements ItemWriter<Post> {
 
 	private ItemWriter<Post> delegate;
 	private JdbcTemplate template;
+	private TagService tagService;
+
+	public void setTagService(TagService tagService) {
+		this.tagService = tagService;
+	}
 
 	public void setDelegate(ItemWriter<Post> delegate, DataSource dataSource) {
 		Assert.notNull(delegate);
@@ -47,7 +47,8 @@ public class PostItemWriter implements ItemWriter<Post> {
 						curTag = tag.substring(1);
 					}
 
-					long tagId = getTagId(curTag);
+					long tagId = tagService.getTagId(curTag);
+					System.err.println("tag id from service = " + curTag + "|" + tagId);
 					post.getTagIds().add(tagId);
 					postTagPairings.add(new Tuple<>(post.getId(), tagId));
 				}
@@ -68,34 +69,6 @@ public class PostItemWriter implements ItemWriter<Post> {
 				return postTagPairings.size();
 			}
 		});
-	}
-
-	@Cacheable("tag")
-	protected long getTagId(final String tag) {
-		long id = -1;
-
-		try {
-			id = template.queryForObject("select id from TAG where TAG = ?", Long.class, tag);
-		} catch (EmptyResultDataAccessException ignore) { }
-
-		if(id < 0) {
-			KeyHolder keyHolder = new GeneratedKeyHolder();
-
-			template.update(new PreparedStatementCreator() {
-				@Override
-				public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-					PreparedStatement ps = con.prepareStatement("insert into TAG (VERSION, TAG) VALUES (1, ?)", new String[] {"ID"});
-
-					ps.setString(1, tag);
-
-					return ps;
-				}
-			}, keyHolder);
-
-			id = keyHolder.getKey().longValue();
-		}
-
-		return id;
 	}
 
 	private class Tuple<T,D> {
