@@ -15,14 +15,14 @@
  */
 package io.spring.recommendation.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcOperations;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -32,15 +32,12 @@ import java.sql.SQLException;
  */
 public class TagServiceImpl implements TagService {
 
+	@Autowired
 	private JdbcOperations template;
 
-	public void setDataSource(DataSource dataSource) {
-		this.template = new JdbcTemplate(dataSource);
-	}
-
 	@Override
+	@Cacheable("tag")
 	public long getTagId(final String tag) {
-		System.err.println("getTagId called with " + tag);
 		long id = -1;
 
 		try {
@@ -63,7 +60,6 @@ public class TagServiceImpl implements TagService {
 
 			id = keyHolder.getKey().longValue();
 		}
-		System.err.println("Tag has the new id of " + id);
 
 		return id;
 	}

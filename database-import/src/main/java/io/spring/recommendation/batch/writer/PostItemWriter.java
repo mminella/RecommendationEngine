@@ -3,12 +3,18 @@ package io.spring.recommendation.batch.writer;
 import io.spring.recommendation.domain.Post;
 import io.spring.recommendation.service.TagService;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
-import javax.sql.DataSource;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -17,17 +23,17 @@ import java.util.List;
 public class PostItemWriter implements ItemWriter<Post> {
 
 	private ItemWriter<Post> delegate;
-	private JdbcTemplate template;
+	@Autowired
+	private JdbcOperations template;
 	private TagService tagService;
 
 	public void setTagService(TagService tagService) {
 		this.tagService = tagService;
 	}
 
-	public void setDelegate(ItemWriter<Post> delegate, DataSource dataSource) {
+	public void setDelegate(ItemWriter<Post> delegate) {
 		Assert.notNull(delegate);
 		this.delegate = delegate;
-		this.template = new JdbcTemplate(dataSource);
 	}
 
 	@Override
@@ -48,7 +54,6 @@ public class PostItemWriter implements ItemWriter<Post> {
 					}
 
 					long tagId = tagService.getTagId(curTag);
-					System.err.println("tag id from service = " + curTag + "|" + tagId);
 					post.getTagIds().add(tagId);
 					postTagPairings.add(new Tuple<>(post.getId(), tagId));
 				}
@@ -86,6 +91,11 @@ public class PostItemWriter implements ItemWriter<Post> {
 
 		public D getValue() {
 			return value;
+		}
+
+		@Override
+		public String toString() {
+			return "key: " + key + " value: " + value;
 		}
 	}
 }

@@ -13,6 +13,8 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.core.job.builder.FlowBuilder;
+import org.springframework.batch.core.job.flow.Flow;
 import org.springframework.batch.core.step.skip.SkipLimitExceededException;
 import org.springframework.batch.core.step.skip.SkipPolicy;
 import org.springframework.batch.item.ItemStreamReader;
@@ -32,8 +34,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.oxm.castor.CastorMarshaller;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.interceptor.DefaultTransactionAttribute;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -97,9 +102,8 @@ public class ImportJob {
 	}
 
 	@Bean
-	protected TagService tagService(DataSource dataSource) {
+	protected TagService tagService() {
 		TagServiceImpl service = new TagServiceImpl();
-		service.setDataSource(dataSource);
 
 		return service;
 	}
@@ -131,8 +135,8 @@ public class ImportJob {
 		delegate.afterPropertiesSet();
 
 		PostItemWriter writer = new PostItemWriter();
-		writer.setDelegate(delegate, dataSource);
-		writer.setTagService(tagService(dataSource));
+		writer.setDelegate(delegate);
+		writer.setTagService(tagService());
 
 		return writer;
 	}
@@ -154,6 +158,7 @@ public class ImportJob {
 							   }
 						   }
 					   })
+					   .transactionAttribute(new DefaultTransactionAttribute(TransactionDefinition.PROPAGATION_REQUIRED))
 					   .build();
 	}
 
@@ -257,12 +262,15 @@ public class ImportJob {
 
 	@Bean
 	public Job job(DataSource dataSource) throws Exception {
+		Flow step3Flow = new FlowBuilder<Flow>("step3Flow").start(step3(dataSource)).end();
+		Flow step4Flow = new FlowBuilder<Flow>("step4Flow").start(step4(dataSource)).end();
 		return this.jobs.get("import")
-					   .start(step1(dataSource))
-					   .next(step2(dataSource))
-					   .next(step3(dataSource))
-					   .next(step4(dataSource))
-					   .build();
+						.start(step1(dataSource))
+						.next(step2(dataSource))
+						.split(new SimpleAsyncTaskExecutor())
+						.add(step3Flow, step4Flow)
+						.end()
+						.build();
 	}
 
 	public static void main(String[] args) throws Exception {
