@@ -15,37 +15,26 @@
  */
 package io.spring.recommendation.domain;
 
-import java.util.Date;
-
 /**
  * @author Michael Minella
  */
-public class Vote extends Entity {
-	private long postId;
-	private int voteType;
-	private Date creationDate;
+public class Entity {
+	private long id;
+	private long version;
 
-	public long getPostId() {
-		return postId;
+	public long getId() {
+		return id;
 	}
 
-	public void setPostId(long postId) {
-		this.postId = postId;
+	public void setId(long id) {
+		this.id = id;
 	}
 
-	public int getVoteType() {
-		return voteType;
+	public long getVersion() {
+		return version;
 	}
 
-	public void setVoteType(int voteType) {
-		this.voteType = voteType;
-	}
-
-	public Date getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
+	public void setVersion(long version) {
+		this.version = version;
 	}
 }

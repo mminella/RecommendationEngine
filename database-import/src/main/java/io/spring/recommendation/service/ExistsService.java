@@ -13,39 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.spring.recommendation.domain;
-
-import java.util.Date;
+package io.spring.recommendation.service;
 
 /**
  * @author Michael Minella
  */
-public class Vote extends Entity {
-	private long postId;
-	private int voteType;
-	private Date creationDate;
+public interface ExistsService<T> {
 
-	public long getPostId() {
-		return postId;
-	}
-
-	public void setPostId(long postId) {
-		this.postId = postId;
-	}
-
-	public int getVoteType() {
-		return voteType;
-	}
-
-	public void setVoteType(int voteType) {
-		this.voteType = voteType;
-	}
-
-	public Date getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
+	boolean exists(T id);
 }

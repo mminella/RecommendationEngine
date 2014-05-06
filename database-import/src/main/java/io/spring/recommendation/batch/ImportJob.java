@@ -1,10 +1,14 @@
 package io.spring.recommendation.batch;
 
+import io.spring.recommendation.batch.processor.ExistsItemProcessor;
 import io.spring.recommendation.batch.writer.PostItemWriter;
 import io.spring.recommendation.domain.Comment;
 import io.spring.recommendation.domain.Post;
 import io.spring.recommendation.domain.User;
 import io.spring.recommendation.domain.Vote;
+import io.spring.recommendation.service.CommentsKeysExistService;
+import io.spring.recommendation.service.PostExistsService;
+import io.spring.recommendation.service.PostOwnerExistsService;
 import io.spring.recommendation.service.TagService;
 import io.spring.recommendation.service.TagServiceImpl;
 import org.springframework.batch.core.Job;
@@ -14,9 +18,9 @@ import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.FlowBuilder;
+import org.springframework.batch.core.job.builder.FlowJobBuilder;
 import org.springframework.batch.core.job.flow.Flow;
-import org.springframework.batch.core.step.skip.SkipLimitExceededException;
-import org.springframework.batch.core.step.skip.SkipPolicy;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemStreamReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
@@ -26,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
@@ -34,15 +39,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.task.SimpleAsyncTaskExecutor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.oxm.castor.CastorMarshaller;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.interceptor.DefaultTransactionAttribute;
 
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 @Configuration
 @EnableCaching
@@ -59,7 +61,9 @@ public class ImportJob {
 	@Bean
 	CacheManager cacheManager() {
 		SimpleCacheManager manager = new SimpleCacheManager();
-		manager.setCaches(Arrays.asList(new ConcurrentMapCache("tag")));
+		List<Cache> caches = new ArrayList<>();
+		caches.add(new ConcurrentMapCache("tag"));
+		manager.setCaches(caches);
 		return manager;
 	}
 
@@ -95,7 +99,7 @@ public class ImportJob {
 	@Bean
 	protected Step step1(DataSource dataSource) throws Exception {
 		return this.steps.get("step1")
-				.<User, User> chunk(1000)
+				.<User, User> chunk(10000)
 				.reader(usersItemReader(null))
 				.writer(usersItemWriter(dataSource))
 				.build();
@@ -103,9 +107,17 @@ public class ImportJob {
 
 	@Bean
 	protected TagService tagService() {
-		TagServiceImpl service = new TagServiceImpl();
+		return new TagServiceImpl();
+	}
 
-		return service;
+	@Bean
+	protected PostOwnerExistsService postOwnerService() {
+		return new PostOwnerExistsService();
+	}
+
+	@Bean
+	protected ItemProcessor<Post, Post> userFilterItemProcessor() {
+		return new ExistsItemProcessor<>(postOwnerService());
 	}
 
 	@Bean
@@ -144,21 +156,11 @@ public class ImportJob {
 	@Bean
 	protected Step step2(DataSource dataSource) throws Exception {
 		return this.steps.get("step2")
-					   .<Post, Post> chunk(1000)
+					   .<Post, Post> chunk(10000)
 					   .reader(postItemReader(null))
+					   .processor(userFilterItemProcessor())
 					   .writer(postItemWriter(dataSource))
-					   .faultTolerant()
-					   .skipPolicy(new SkipPolicy() {
-						   @Override
-						   public boolean shouldSkip(Throwable t, int skipCount) throws SkipLimitExceededException {
-							   if (t instanceof DataIntegrityViolationException && t.getMessage().contains("POST_USER")) {
-								   return true;
-							   } else {
-								   return false;
-							   }
-						   }
-					   })
-					   .transactionAttribute(new DefaultTransactionAttribute(TransactionDefinition.PROPAGATION_REQUIRED))
+					   .stream(postOwnerService())
 					   .build();
 	}
 
@@ -192,22 +194,23 @@ public class ImportJob {
 	}
 
 	@Bean
+	protected PostExistsService postExistsService() {
+		return new PostExistsService();
+	}
+
+	@Bean
+	protected ItemProcessor<Vote, Vote> postFilterItemProcessor() {
+		return new ExistsItemProcessor<>(postExistsService());
+	}
+
+	@Bean
 	protected Step step3(DataSource dataSource) throws Exception {
 		return this.steps.get("step3")
-					   .<Vote, Vote> chunk(1000)
+					   .<Vote, Vote> chunk(10000)
 					   .reader(voteItemReader(null))
+					   .processor(postFilterItemProcessor())
 					   .writer(votesItemWriter(dataSource))
-					   .faultTolerant()
-					   .skipPolicy(new SkipPolicy() {
-						   @Override
-						   public boolean shouldSkip(Throwable t, int skipCount) throws SkipLimitExceededException {
-							   if (t instanceof DataIntegrityViolationException && t.getMessage().contains("POST_ID")) {
-								   return true;
-							   } else {
-								   return false;
-							   }
-						   }
-					   })
+					   .stream(postExistsService())
 					   .build();
 	}
 
@@ -241,22 +244,23 @@ public class ImportJob {
 	}
 
 	@Bean
+	protected CommentsKeysExistService commentsKeyService() {
+		return new CommentsKeysExistService();
+	}
+
+	@Bean
+	protected ItemProcessor<Comment, Comment> commentFilterItemProcessor() {
+		return new ExistsItemProcessor<>(commentsKeyService());
+	}
+
+	@Bean
 	protected Step step4(DataSource dataSource) throws Exception {
 		return this.steps.get("step4")
-					   .<Comment, Comment> chunk(1000)
+					   .<Comment, Comment> chunk(10000)
 					   .reader(commentItemReader(null))
+					   .processor(commentFilterItemProcessor())
 					   .writer(commentItemWriter(dataSource))
-					   .faultTolerant()
-					   .skipPolicy(new SkipPolicy() {
-						   @Override
-						   public boolean shouldSkip(Throwable t, int skipCount) throws SkipLimitExceededException {
-							   if (t instanceof DataIntegrityViolationException && t.getMessage().contains("USER_ID")) {
-								   return true;
-							   } else {
-								   return false;
-							   }
-						   }
-					   })
+					   .stream(commentsKeyService())
 					   .build();
 	}
 
@@ -264,13 +268,15 @@ public class ImportJob {
 	public Job job(DataSource dataSource) throws Exception {
 		Flow step3Flow = new FlowBuilder<Flow>("step3Flow").start(step3(dataSource)).end();
 		Flow step4Flow = new FlowBuilder<Flow>("step4Flow").start(step4(dataSource)).end();
-		return this.jobs.get("import")
-						.start(step1(dataSource))
-						.next(step2(dataSource))
-						.split(new SimpleAsyncTaskExecutor())
-						.add(step3Flow, step4Flow)
-						.end()
-						.build();
+//		Flow parallelFlow = new FlowBuilder<Flow>("parallelFlow").split(new SimpleAsyncTaskExecutor()).add(step3Flow, step4Flow).build();
+
+		return new FlowJobBuilder(this.jobs.get("import"))
+					   .start(step1(dataSource))
+					   .next(step2(dataSource))
+					   .next(step3Flow)
+					   .next(step4Flow)
+					   .end()
+					   .build();
 	}
 
 	public static void main(String[] args) throws Exception {

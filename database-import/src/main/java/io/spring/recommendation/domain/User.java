@@ -20,8 +20,7 @@ import java.util.Date;
 /**
  * @author Michael Minella
  */
-public class User {
-	private long id;
+public class User extends Entity {
 	private int reputation;
 	private Date creationDate;
 	private String displayName;
@@ -31,14 +30,6 @@ public class User {
 	private int views;
 	private int upVotes;
 	private int downVotes;
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
 
 	public int getReputation() {
 		return reputation;

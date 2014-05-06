@@ -13,39 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.spring.recommendation.domain;
+package io.spring.recommendation.batch.processor;
 
-import java.util.Date;
+import io.spring.recommendation.service.ExistsService;
+import org.springframework.batch.item.ItemProcessor;
 
 /**
  * @author Michael Minella
  */
-public class Vote extends Entity {
-	private long postId;
-	private int voteType;
-	private Date creationDate;
+public class ExistsItemProcessor<T> implements ItemProcessor<T, T>{
 
-	public long getPostId() {
-		return postId;
+	private ExistsService service;
+
+	public ExistsItemProcessor(ExistsService service) {
+		this.service = service;
 	}
 
-	public void setPostId(long postId) {
-		this.postId = postId;
-	}
+	@Override
+	public T process(T item) throws Exception {
 
-	public int getVoteType() {
-		return voteType;
-	}
-
-	public void setVoteType(int voteType) {
-		this.voteType = voteType;
-	}
-
-	public Date getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
+		if(service.exists(item)) {
+			return item;
+		} else {
+			return null;
+		}
 	}
 }

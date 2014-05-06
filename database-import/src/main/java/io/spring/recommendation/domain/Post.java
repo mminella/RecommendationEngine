@@ -3,8 +3,7 @@ package io.spring.recommendation.domain;
 import java.util.Date;
 import java.util.List;
 
-public class Post {
-	private long id;
+public class Post extends Entity {
 	private Integer postTypeId;
 	private Long acceptedAnswerId;
 	private Date creationDate;
@@ -23,7 +22,7 @@ public class Post {
 	public Post() {}
 
 	public Post(Post origin) {
-		this.id = origin.getId();
+		setId(origin.getId());
 		this.postTypeId = origin.getPostTypeId();
 		this.acceptedAnswerId = origin.getAcceptedAnswerId();
 		this.score = origin.getScore();
@@ -33,14 +32,6 @@ public class Post {
 		this.tagIds = origin.getTagIds();
 		this.creationDate = origin.getCreationDate();
 		this.parentId = origin.getParentId();
-	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
 	}
 
 	public Integer getPostTypeId() {

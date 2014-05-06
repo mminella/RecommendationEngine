@@ -20,9 +20,7 @@ import java.util.Date;
 /**
  * @author Michael Minella
  */
-public class Comment {
-	private long id;
-	private long version;
+public class Comment extends Entity {
 	private long postId;
 	private String value;
 	private Date creationDate;
@@ -35,22 +33,6 @@ public class Comment {
 
 	public void setScore(int score) {
 		this.score = score;
-	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public long getVersion() {
-		return version;
-	}
-
-	public void setVersion(long version) {
-		this.version = version;
 	}
 
 	public long getPostId() {
