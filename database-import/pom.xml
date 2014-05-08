@@ -14,9 +14,7 @@
         <version>1.0.1.RELEASE</version>
     </parent>
     <name>database-import</name>
-	<properties>
-		<spring-batch.version>3.0.0.M3</spring-batch.version>
-	</properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>

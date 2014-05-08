@@ -15,6 +15,7 @@
  */
 package io.spring.springoverflow.domain;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -26,6 +27,7 @@ import javax.persistence.Version;
  * @author Michael Minella
  */
 @Entity
+@Cacheable(true)
 public class Tag {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

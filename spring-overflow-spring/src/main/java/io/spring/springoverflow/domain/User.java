@@ -15,6 +15,7 @@
  */
 package io.spring.springoverflow.domain;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -29,6 +30,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "USERS")
+@Cacheable(true)
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
