@@ -15,6 +15,7 @@
  */
 package io.spring.springoverflow.domain;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 /**
@@ -22,5 +23,6 @@ import org.springframework.data.repository.CrudRepository;
  */
 public interface UserRepository extends CrudRepository<User, Long>{
 
+	@Query("select u from User u where u.id in (select max(id) from User where displayName = ?1 group by displayName)")
 	User findByDisplayName(String displayName);
 }

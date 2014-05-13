@@ -19,61 +19,69 @@
                 </div>
             </div>
             <h1 th:text="${post.title}">Can this really work?</h1>
+        </div>
+        <div class="container">
             <div class="row">
-                <div class="col-md-1 text-center" th:text="${post.voteCount}">Votes</div>
-                <div class="col-md-8">
-                    <div th:utext="${post.body}">This is the text of the question</div>
-                    <ul class="list-inline tags">
-                        <li th:each="curTag : ${post.tags}" th:text="${curTag.tag}">My Tag</li>
-                    </ul>
-                    <div class="col-md-offset-9 askuser">
-                        <div th:text="'asked ' + ${#dates.format(post.creationDate, 'MMM dd')} + ' \'' + ${#dates.format(post.creationDate, 'YY')} + ' at ' + ${#dates.format(post.creationDate, 'HH:mm')}">Asked 1 million years ago</div>
-                        <div th:text="${post.ownerUser.displayName}">By me</div>
-                    </div>
-                    <div class="comments" th:if="${#lists.size(post.comments)}">
-                        <div class="comment" th:each="comment : ${post.comments}">
-                            <div class="col-md-offset-1" th:text="${comment.value} + ' - ' + ${comment.user.displayName} + ' ' + ${#dates.format(comment.creationDate, 'MMM dd')} + ' at ' + ${#dates.format(comment.creationDate, 'HH:mm')}">My Comment</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">&nbsp;</div>
-            </div>
-            <h1 th:text="${#lists.size(post.answers)} + ' Answers'" th:if="${#lists.size(post.answers)}">One Million Answers...</h1>
-            <div class="answers clearfix">
-                <div class="col-md-12" th:classappend="not ${answerStat.first}? 'answer'" th:each="answer : ${post.answers}" th:if="${#lists.size(post.answers)}">
-                    <div class="col-md-1 text-center" th:text="${answer.voteCount}">Votes</div>
-                    <div class="col-md-8">
-                        <div th:utext="${answer.body}">This is the text of the answer</div>
-                        <div class="col-md-offset-8 answeruser">
-                            <div th:text="'answered
-                             ' + ${#dates.format(answer.creationDate, 'MMM dd')} + ' \'' + ${#dates.format(answer.creationDate, 'YY')} + ' at ' + ${#dates.format(answer.creationDate, 'HH:mm')}">Answered 1 million years ago</div>
-                            <div th:text="${answer.ownerUser.displayName}">By me</div>
-                        </div>
-                        <div th:if="${#lists.size(answer.comments)}">
-                            <div class="comment" th:each="comment : ${answer.comments}">
-                                <div class="col-md-offset-1" th:text="${comment.value} + ' - ' + ${comment.user.displayName} + ' ' + ${#dates.format(comment.creationDate, 'MMM dd')} + ' at ' + ${#dates.format(comment.creationDate, 'HH:mm')}">My Comment</div>
+                <div class="col-md-9">
+                    <div class="row">
+                        <div class="col-md-1 text-center" th:text="${post.voteCount}">Votes</div>
+                        <div class="col-md-11">
+                            <div th:utext="${post.body}">This is the text of the question</div>
+                            <ul class="list-inline tags">
+                                <li th:each="curTag : ${post.tags}" th:text="${curTag.tag}">My Tag</li>
+                            </ul>
+                            <div class="col-md-offset-9 askuser">
+                                <div th:text="'asked ' + ${#dates.format(post.creationDate, 'MMM dd')} + ' \'' + ${#dates.format(post.creationDate, 'YY')} + ' at ' + ${#dates.format(post.creationDate, 'HH:mm')}">Asked 1 million years ago</div>
+                                <div th:text="${post.ownerUser.displayName}">By me</div>
+                            </div>
+                            <div class="comments" th:if="${#lists.size(post.comments)}">
+                                <div class="comment" th:each="comment : ${post.comments}">
+                                    <div class="col-md-offset-1" th:text="${comment.value} + ' - ' + ${comment.user.displayName} + ' ' + ${#dates.format(comment.creationDate, 'MMM dd')} + ' at ' + ${#dates.format(comment.creationDate, 'HH:mm')}">My Comment</div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3">&nbsp;</div>
-                </div>
-            </div>
-            <div class="col-md-12" sec:authorize="hasRole('ROLE_AUTHENTICATED')" id="yourAnswer">
-                <h1>Your Answer</h1>
-                <div class="col-md-9">
-                    <div class="wmd-panel">
-                        <div id="wmd-button-bar"></div>
-                        <textarea class="wmd-input" id="wmd-input"/>
+                    <div class="row">
+                        <h1 class="col-md-12" th:text="${#lists.size(post.answers)} + ' Answers'" th:if="${#lists.size(post.answers)}">One Million Answers...</h1>
+                        <div class="answers col-md-12">
+                            <div class="col-md-12" th:classappend="not ${answerStat.first}? 'answer'" th:each="answer : ${post.answers}" th:if="${#lists.size(post.answers)}">
+                                <div class="col-md-1 text-center" th:text="${answer.voteCount}">Votes</div>
+                                <div class="col-md-11">
+                                    <div th:utext="${answer.body}">This is the text of the answer</div>
+                                    <div class="col-md-offset-8 answeruser">
+                                        <div th:text="'answered ' + ${#dates.format(answer.creationDate, 'MMM dd')} + ' \'' + ${#dates.format(answer.creationDate, 'YY')} + ' at ' + ${#dates.format(answer.creationDate, 'HH:mm')}">Answered 1 million years ago</div>
+                                        <div th:text="${answer.ownerUser.displayName}">By me</div>
+                                    </div>
+                                    <div th:if="${#lists.size(answer.comments)}">
+                                        <div class="comment" th:each="comment : ${answer.comments}">
+                                            <div class="col-md-offset-1" th:text="${comment.value} + ' - ' + ${comment.user.displayName} + ' ' + ${#dates.format(comment.creationDate, 'MMM dd')} + ' at ' + ${#dates.format(comment.creationDate, 'HH:mm')}">My Comment</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-12" sec:authorize="hasRole('ROLE_AUTHENTICATED')" id="yourAnswer">
+                            <h1>Your Answer</h1>
+                            <div>
+                                <div class="wmd-panel">
+                                    <div id="wmd-button-bar"></div>
+                                    <textarea class="wmd-input" id="wmd-input"/>
+                                </div>
 
-                    <div id="wmd-preview" class="wmd-panel wmd-preview"></div>
+                                <div id="wmd-preview" class="wmd-panel wmd-preview"></div>
 
-                    <form id="answerForm" action="index.html" th:action="@{/post/save}" method="post">
-                        <input type="hidden" name="postId" id="postId" th:value="${post.id}"/>
-                        <input type="hidden" name="body" id="body"/>
-                        <input id="submit" type="submit" class="btn" value="Post Your Answer"/>
-                    </form>
+                                <form id="answerForm" action="index.html" th:action="@{/post/save}" method="post">
+                                    <input type="hidden" name="postId" id="postId" th:value="${post.id}"/>
+                                    <input type="hidden" name="body" id="body"/>
+                                    <input id="submit" type="submit" class="btn" value="Post Your Answer"/>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+                <div class="col-md-3"><img src="/images/banner2.png" alt="Spring can do that!"/> </div>
             </div>
         </div>
 
