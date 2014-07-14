@@ -19,6 +19,7 @@ The idea for this demo and help with some of the code came from the blog post [D
 3. **A database** - The SQL script provided and the POM file's dependencies are set up for MySQL, but there is nothing code specific that would prevent you from updating the scripts and dropping in a new driver.
 4. **The StackOverflow Data** - The data used in this project comes from the quarterly dump of StackExcahnge's data.  You can find a link to the torrent to download it here: [StackExchange Data](https://archive.org/details/stackexchange) and information about the schema of the data here: [StackExchange data schema](http://meta.stackoverflow.com/questions/2677/database-schema-documentation-for-the-public-data-dump-and-sede).
 5. **Configure the database connection** - The below instructions assume you have updated the two application.properties files in this project to point to your MySql instance.  The location of those two properties files are: database-import/src/main/resources and spring-overflow-spring/src/main/resources.
+6. **Version of Mahout that runs with Hadoop 2.x** - Mahout 0.9 currently only works with Hadoop 1.2 yet Spring XD requires Hadoop 2.x or higher.  To run this project, you'll need to checkout and build the latest version of Mahout (assuming you aren't using their 1.0 release).  You can find information on building Mahout here: [Build Mahout](http://stackoverflow.com/questions/18767843/how-can-i-compile-using-mahout-for-hadoop-2-0/24745296#24745296)
 
 #### Potential cleanup before process
 ---

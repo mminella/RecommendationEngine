@@ -15,7 +15,7 @@
 	</parent>
     <name>Spring Overflow - Spring Boot based</name>
 	<properties>
-		<mahout.version>0.9</mahout.version>
+		<mahout.version>1.0-SNAPSHOT</mahout.version>
 	</properties>
     <dependencies>
 		<dependency>
@@ -49,7 +49,7 @@
         </dependency>
 		<dependency>
 			<groupId>org.apache.mahout</groupId>
-			<artifactId>mahout-core</artifactId>
+			<artifactId>mahout-mrlegacy</artifactId>
 			<version>${mahout.version}</version>
 			<exclusions>
 				<exclusion>

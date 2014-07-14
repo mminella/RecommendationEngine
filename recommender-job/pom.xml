@@ -12,17 +12,16 @@
 		<groupId>io.spring.platform</groupId>
 		<artifactId>platform-bom</artifactId>
 		<version>1.0.1.RELEASE</version>
-		<!--<relativePath/>-->
 	</parent>
 
     <properties>
-        <mahout.version>0.9</mahout.version>
+		<mahout.version>1.0-SNAPSHOT</mahout.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.apache.mahout</groupId>
-            <artifactId>mahout-core</artifactId>
+            <artifactId>mahout-mrlegacy</artifactId>
             <version>${mahout.version}</version>
             <exclusions>
                 <exclusion>
