@@ -114,7 +114,7 @@ Once the data has been preprocessed on Hadoop, we'll move the results into the d
 1. From the Spring XD shell, create a the new job.  It's important to note that in order for this job to work correctly, the code in Spring XD [PR 729](https://github.com/spring-projects/spring-xd/pull/729) be included or equivilent.  Without this, the hdfsjdbc job won't support tab delimited files.
 
     ```
-    xd:> job create hdfsExport --definition "hdfsjdbc --resources=/xd/hdfsImport/postsResults/part-r-* --names=item_id_a,item_id_b,similarity --tableName=taste_item_similarity --delimiter=\t"
+    xd:> job create hdfsExport --definition "hdfsjdbc --resources=/xd/hdfsImport/postsResults/part-r-* --names=item_id_a,item_id_b,similarity --tableName=taste_item_similarity --delimiter='\t'"
     ```
 2. From the XD shell, deploy the job (or add `--deploy` to the previous step):
 

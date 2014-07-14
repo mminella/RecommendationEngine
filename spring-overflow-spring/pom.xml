@@ -7,12 +7,12 @@
     <groupId>io.spring.recommendation-engine</groupId>
     <artifactId>spring-overflow-spring</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>war</packaging>
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.0.1.RELEASE</version>
-    </parent>
+    <packaging>jar</packaging>
+	<parent>
+		<groupId>io.spring.platform</groupId>
+		<artifactId>platform-bom</artifactId>
+		<version>1.0.1.RELEASE</version>
+	</parent>
     <name>Spring Overflow - Spring Boot based</name>
 	<properties>
 		<mahout.version>0.9</mahout.version>
@@ -46,7 +46,6 @@
 		<dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.26</version>
         </dependency>
 		<dependency>
 			<groupId>org.apache.mahout</groupId>

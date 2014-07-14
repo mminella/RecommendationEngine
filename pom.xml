@@ -7,12 +7,18 @@
 	<version>1.0-SNAPSHOT</version>
 	<name>recommendation_engine</name>
 	<url>http://maven.apache.org</url>
-	<properties>
-   	 	<spring-batch.version>3.0.0.M3</spring-batch.version>
-        <spring-hadoop.version>2.0.0.RC2</spring-hadoop.version>
-        <mahout.version>0.8</mahout.version>
-	</properties>
-    <modules>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>io.spring.platform</groupId>
+				<artifactId>platform-bom</artifactId>
+				<version>1.0.1.RELEASE</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+	<modules>
         <module>database-import</module>
         <module>recommender-job</module>
 		<module>spring-overflow-spring</module>

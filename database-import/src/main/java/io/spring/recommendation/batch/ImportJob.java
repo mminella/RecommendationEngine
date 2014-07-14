@@ -268,7 +268,6 @@ public class ImportJob {
 	public Job job(DataSource dataSource) throws Exception {
 		Flow step3Flow = new FlowBuilder<Flow>("step3Flow").start(step3(dataSource)).end();
 		Flow step4Flow = new FlowBuilder<Flow>("step4Flow").start(step4(dataSource)).end();
-//		Flow parallelFlow = new FlowBuilder<Flow>("parallelFlow").split(new SimpleAsyncTaskExecutor()).add(step3Flow, step4Flow).build();
 
 		return new FlowJobBuilder(this.jobs.get("import"))
 					   .start(step1(dataSource))
