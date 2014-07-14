@@ -64,19 +64,14 @@ To injest the data from the database into HDFS so that it can be processed on Ha
 4. From the Spring XD Shell, create your job.  Note, newer versions of Spring XD allow you to create and deploy in one step by adding the `--deploy` option.  Do this if your version supports it. 
 
     ```
-    xd:> job create hdfsImport --definition "jdbchdfs --sql='select pp.owner_user_id, t.id, coalesce(pp.score, 1) from tag t inner join post_tag tp on t.id = tp.tag_id left outer join post p on tp.post_id = p.id inner join post pp on pp.parent_id = p.id where pp.post_type = 2 order by pp.owner_user_id'"
+    xd:> job create hdfsImport --definition "jdbchdfs --sql='select pp.owner_user_id, t.id, coalesce(pp.score, 1) from tag t inner join post_tag tp on t.id = tp.tag_id left outer join post p on tp.post_id = p.id inner join post pp on pp.parent_id = p.id where pp.post_type = 2 order by pp.owner_user_id'" --deploy
     ```
-5. If your version of Spring XD does not support creating and deploying jobs in one step, deploy the job:
-
-    ```
-    xd:> job deploy hdfsImport
-    ```
-6. Launch your job via
+5. Launch your job via
 
     ```
     xd:> job launch hdfsImport
     ```
-7. Verify the output by checking HDFS for the output file:
+6. Verify the output by checking HDFS for the output file:
 
     ```
     $ hadoop fs -ls /xd/hdfsImport
@@ -90,19 +85,14 @@ If you execute the maven build before, you already will have the packaged job to
 2. From the Spring XD shell, create the new job
 
     ```
-    xd:> job create mahout --definition "recommender"
+    xd:> job create mahout --definition "recommender" --deploy
     ```
-3. From the XD shell, deploy the job (or add `--deploy` to the previous step):
-
-    ```
-    xd:> job deploy mahout
-    ```
-4. From the XD shell, launch the job:
+3. From the XD shell, launch the job:
 
     ```
     xd:> job launch mahout
     ```
-5. Verify the output:
+4. Verify the output:
 
     ```
     $ hadoop fs -ls /xd/hdfsImport/postsResults
@@ -115,19 +105,14 @@ Once the data has been preprocessed on Hadoop, we'll move the results into the d
 1. From the Spring XD shell, create a the new job.  It's important to note that in order for this job to work correctly, the code in Spring XD [PR 729](https://github.com/spring-projects/spring-xd/pull/729) be included or equivilent.  Without this, the hdfsjdbc job won't support tab delimited files.
 
     ```
-    xd:> job create hdfsExport --definition "hdfsjdbc --resources=/xd/hdfsImport/postsResults/part-r-* --names=item_id_a,item_id_b,similarity --tableName=taste_item_similarity --delimiter='\t'"
+    xd:> job create hdfsExport --definition "hdfsjdbc --resources=/xd/hdfsImport/postsResults/part-r-* --names=item_id_a,item_id_b,similarity --tableName=taste_item_similarity --delimiter='\t'" --deploy
     ```
-2. From the XD shell, deploy the job (or add `--deploy` to the previous step):
-
-    ```
-    xd:> job deploy hdfsExport
-    ```
-3. From the XD shell, launch the job:
+2. From the XD shell, launch the job:
 
     ```
     xd:> job launch hdfsExport
     ```
-4. Verify the output.  Note, the output from the below command is *not* from the full import.  Your count will be different.  Just confirm that records are there:
+3. Verify the output.  Note, the output from the below command is *not* from the full import.  Your count will be different.  Just confirm that records are there:
 
     ```
     mysql> select count(*) from taste_item_similarity;

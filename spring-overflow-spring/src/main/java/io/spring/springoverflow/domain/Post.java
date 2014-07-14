@@ -45,7 +45,7 @@ import java.util.TreeSet;
 public class Post {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+	private Long id;
 
 	@Version
 	private long version;
@@ -134,11 +134,11 @@ public class Post {
 		this.voteCount = voteCount;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -261,4 +261,35 @@ public class Post {
 	public void setTags(Set<Tag> tags) {
 		this.tags = tags;
 	}
+
+	@Override
+	public String toString() {
+		return "Id = " + id;
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (this == other) return true;
+		if ( !(other instanceof Post) ) return false;
+
+		final Post post = (Post) other;
+
+		if ( !post.getId().equals( getId() ) ) return false;
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int result;
+
+		if(getId() != null) {
+			result = 29 * getId().hashCode();
+		} else {
+			result = super.hashCode();
+		}
+
+		return result;
+	}
+
 }

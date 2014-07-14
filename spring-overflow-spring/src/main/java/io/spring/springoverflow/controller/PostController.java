@@ -18,6 +18,7 @@ package io.spring.springoverflow.controller;
 import io.spring.springoverflow.domain.PageWrapper;
 import io.spring.springoverflow.domain.Post;
 import io.spring.springoverflow.domain.PostRepository;
+import io.spring.springoverflow.domain.Tag;
 import io.spring.springoverflow.domain.User;
 import io.spring.springoverflow.domain.UserRepository;
 import org.apache.mahout.cf.taste.recommender.ItemBasedRecommender;
@@ -37,7 +38,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Michael Minella
@@ -98,16 +101,26 @@ public class PostController {
 
 		postRepository.save(parentPost);
 
-		List<RecommendedItem> items = recommender.recommend(userId, 3);
+		List<RecommendedItem> items = recommendItems(currentUser);
 		List<Post> matchingPosts = new ArrayList<>();
 
 		for (RecommendedItem item : items) {
-			List<Post> posts = postRepository.findByTagId(item.getItemID(), new PageRequest(0, 10));
+			List<Post> posts = postRepository.findByTagId(item.getItemID(), new PageRequest(0, 3));
 
 			matchingPosts.addAll(posts);
 		}
 
-		List<Post> recommendedPosts = new ArrayList<>(3);
+		if(matchingPosts.size() < 3) {
+			items = recommendItems(parentPost.getTags());
+
+			for (RecommendedItem item : items) {
+				List<Post> posts = postRepository.findByTagId(item.getItemID(), new PageRequest(0, 3));
+
+				matchingPosts.addAll(posts);
+			}
+		}
+
+		Set<Post> recommendedPosts = new HashSet<>(3);
 
 		if(matchingPosts.size() > 3) {
 			Collections.shuffle(matchingPosts);
@@ -120,5 +133,19 @@ public class PostController {
 		model.addAttribute("recommendations", recommendedPosts);
 
 		return "post/show";
+	}
+
+	private List<RecommendedItem> recommendItems(User user) throws Exception {
+		return recommender.recommend(user.getId(), 10);
+	}
+
+	private List<RecommendedItem> recommendItems(Set<Tag> tags) throws Exception {
+		List<RecommendedItem> items = new ArrayList<>();
+
+		for (Tag tag : tags) {
+			items.addAll(recommender.mostSimilarItems(tag.getId(),10));
+		}
+
+		return items;
 	}
 }
