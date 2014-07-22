@@ -37,6 +37,7 @@ If you've run this project before, you'll need to do a bit of cleanup.  Specific
 **Troubleshooting**
 
 *Unable to delete directories due to Hadoop being in safe mode* - Execute the command: `$ hadoop dfsadmin -safemode leave`
+*Unable to connect to Hadoop: `$ hadoop/sbin/hadoop-daemon.sh start namenode -format`
 
 #### Import of StackOverflow data
 ---

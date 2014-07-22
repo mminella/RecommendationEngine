@@ -17,7 +17,7 @@
 					 tool-class="org.apache.mahout.cf.taste.hadoop.similarity.item.ItemSimilarityJob">
 		<hdp:arg value="-i/xd/hdfsImport"/>
 		<hdp:arg value="-o/xd/hdfsImport/postsResults"/>
-		<hdp:arg value="-sSIMILARITY_COOCCURRENCE"/>
+		<hdp:arg value="-sSIMILARITY_LOGLIKELIHOOD"/>
 		<hdp:arg value="-booleanData=false"/>
 	</hdp:tool-tasklet>
 

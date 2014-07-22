@@ -18,7 +18,7 @@ package io.spring.springoverflow;
 import org.apache.mahout.cf.taste.impl.model.jdbc.MySQLBooleanPrefJDBCDataModel;
 import org.apache.mahout.cf.taste.impl.recommender.AllSimilarItemsCandidateItemsStrategy;
 import org.apache.mahout.cf.taste.impl.recommender.GenericItemBasedRecommender;
-import org.apache.mahout.cf.taste.impl.similarity.jdbc.MySQLJDBCItemSimilarity;
+import org.apache.mahout.cf.taste.impl.similarity.jdbc.MySQLJDBCInMemoryItemSimilarity;
 import org.apache.mahout.cf.taste.model.DataModel;
 import org.apache.mahout.cf.taste.recommender.ItemBasedRecommender;
 import org.apache.mahout.cf.taste.similarity.ItemSimilarity;
@@ -39,9 +39,9 @@ import javax.sql.DataSource;
 public class Application {
 
 	@Bean
-	ItemBasedRecommender recommender(DataSource dataSource) {
+	ItemBasedRecommender recommender(DataSource dataSource) throws Exception {
 		DataModel dataModel = new MySQLBooleanPrefJDBCDataModel(dataSource);
-		ItemSimilarity similarity = new MySQLJDBCItemSimilarity(dataSource);
+		ItemSimilarity similarity = new MySQLJDBCInMemoryItemSimilarity(dataSource);
 		AllSimilarItemsCandidateItemsStrategy candidateItemsStrategy =
 				new AllSimilarItemsCandidateItemsStrategy(similarity);
 		return new GenericItemBasedRecommender(dataModel, similarity, candidateItemsStrategy, candidateItemsStrategy);

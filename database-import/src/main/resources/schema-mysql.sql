@@ -19,7 +19,7 @@ CREATE TABLE USERS (
   VIEWS INT NOT NULL,
   UP_VOTES INT NOT NULL,
   DOWN_VOTES INT NOT NULL
-);
+) ENGINE=InnoDB;
 
 CREATE TABLE POST (
   ID BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -37,7 +37,7 @@ CREATE TABLE POST (
   FAVORITE_COUNT INT,
   PARENT_ID BIGINT,
   constraint POST_USER foreign key (OWNER_USER_ID) references USERS(ID)
-);
+) ENGINE=InnoDB;
 
 CREATE TABLE VOTES (
   ID BIGINT NOT NULL PRIMARY KEY,
@@ -46,7 +46,7 @@ CREATE TABLE VOTES (
   VOTE_TYPE INT NOT NULL,
   CREATION_DATE DATETIME NOT NULL,
   constraint VOTE_POST foreign key (POST_ID) references POST(ID)
-);
+) ENGINE=InnoDB;
 
 CREATE TABLE COMMENTS (
   ID BIGINT NOT NULL PRIMARY KEY,
@@ -58,21 +58,21 @@ CREATE TABLE COMMENTS (
   SCORE INT,
 	constraint COMMENTS_POST foreign key (POST_ID) references POST(ID),
   constraint USERS_POST foreign key (USER_ID) references USERS(ID)
-);
+) ENGINE=InnoDB;
 
 CREATE TABLE TAG (
   ID BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
   VERSION BIGINT NOT NULL,
   TAG VARCHAR(255) NOT NULL,
   constraint tag_unique UNIQUE (TAG)
-);
+) ENGINE=InnoDB;
 
 CREATE TABLE POST_TAG (
   POST_ID BIGINT NOT NULL,
   TAG_ID BIGINT NOT NULL,
   constraint POST_TAG_POST foreign key (POST_ID) references POST(ID),
   constraint POST_TAG_TAG foreign key (TAG_ID) references TAG(ID)
-);
+) ENGINE=InnoDB;
 
 CREATE VIEW taste_preferences AS
   SELECT pp.owner_user_id AS user_id,
@@ -83,14 +83,15 @@ CREATE VIEW taste_preferences AS
     post p ON tp.post_id = p.id INNER JOIN
     post pp ON pp.parent_id = p.id
   WHERE pp.post_type = 2
-  GROUP BY PP.OWNER_USER_ID, T.ID;
+  GROUP BY PP.OWNER_USER_ID, T.ID
+  ORDER BY NULL;
 
 CREATE TABLE taste_item_similarity (
   item_id_a BIGINT NOT NULL,
   item_id_b BIGINT NOT NULL,
   similarity FLOAT NOT NULL,
   PRIMARY KEY (item_id_a, item_id_b)
-);
+) ENGINE=InnoDB;
 
 CREATE INDEX POST_TYPE ON POST (POST_TYPE);
 CREATE INDEX POST_CREATION_DATE ON POST (CREATION_DATE);
