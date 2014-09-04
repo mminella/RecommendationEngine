@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:hdp="http://www.springframework.org/schema/hadoop"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/hadoop http://www.springframework.org/schema/hadoop/spring-hadoop.xsd
+		http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch.xsd">
+
+	<import resource="classpath:/META-INF/spring-xd/batch/singlestep-partition-support.xml"/>
+
+	<step id="step1" xmlns="http://www.springframework.org/schema/batch">
+		<tasklet>
+			<chunk reader="itemReader" writer="itemWriter" commit-interval="100"/>
+		</tasklet>
+	</step>
+
+	<bean id="partitioner" class="io.spring.batch.ColumnRangePartitioner">
+		<property name="dataSource" ref="dataSource"/>
+		<property name="column" value="owner_user_id"/>
+		<property name="table" value="post"/>
+	</bean>
+
+	<bean id="itemReader" class="org.springframework.xd.jdbc.NamedColumnJdbcItemReader" scope="step">
+		<property name="sql" value="select pp.owner_user_id, t.id, coalesce(pp.score, 1) from tag t inner join post_tag tp on t.id = tp.tag_id left outer join post p on tp.post_id = p.id inner join post pp on pp.parent_id = p.id where pp.post_type = 2 and pp.owner_user_id &gt;= #{stepExecutionContext['minValue']} and pp.owner_user_id &lt; #{stepExecutionContext['maxValue']} order by pp.owner_user_id"/>
+		<property name="fetchSize" value="#{T(java.lang.Integer).MIN_VALUE}"/>
+		<property name="dataSource" ref="dataSource" />
+		<property name="verifyCursorPosition" value="false"/>
+	</bean>
+
+	<bean id="itemWriter" class="org.springframework.xd.batch.item.hadoop.HdfsTextItemWriter" scope="step">
+		<constructor-arg ref="hadoopFs"/>
+		<property name="lineAggregator">
+			<bean class="org.springframework.batch.item.file.transform.DelimitedLineAggregator">
+				<property name="fieldExtractor">
+					<bean class="org.springframework.xd.tuple.batch.TupleFieldExtractor"/>
+				</property>
+				<property name="delimiter" value="${delimiter}"/>
+			</bean>
+		</property>
+		<property name="baseFilename" value="${fileName}#{stepExecutionContext['minValue']}-#{stepExecutionContext['maxValue']}"/>
+		<property name="rolloverThresholdInBytes" value="${rollover}"/>
+		<property name="basePath" value="${directory}/"/>
+		<property name="fileSuffix" value="${fileExtension}"/>
+	</bean>
+
+	<bean id="hadoopFs" class="org.springframework.data.hadoop.fs.FileSystemFactoryBean">
+		<property name="configuration" ref="hadoopConfiguration"/>
+	</bean>
+
+	<hdp:configuration register-url-handler="false" properties-location="${xd.config.home}/hadoop.properties">
+		fs.defaultFS=hdfs://localhost:8020
+	</hdp:configuration>
+	<hdp:resource-loader id="hadoopResourceLoader"/>
+
+</beans>

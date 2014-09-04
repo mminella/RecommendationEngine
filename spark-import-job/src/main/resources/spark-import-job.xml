@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:hdp="http://www.springframework.org/schema/hadoop"
+	   xmlns:batch="http://www.springframework.org/schema/batch"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/hadoop http://www.springframework.org/schema/hadoop/spring-hadoop.xsd
+		http://www.springframework.org/schema/batch http://www.springframework.org/schema/batch/spring-batch.xsd">
+
+	<batch:job id="hdfsjdbc">
+		<batch:step id="readResourcesStep">
+			<batch:tasklet>
+				<batch:chunk reader="multiResourceReader" processor="itemProcessor" writer="itemWriter" commit-interval="100"/>
+			</batch:tasklet>
+		</batch:step>
+	</batch:job>
+
+	<bean id="multiResourceReader" class="org.springframework.batch.item.file.MultiResourceItemReader">
+		<property name="resources" value="/xd/hdfsImport/results/indicator-matrix/part*"/>
+		<property name="delegate" ref="itemReader"/>
+	</bean>
+
+	<bean id="itemReader" class="org.springframework.batch.item.file.FlatFileItemReader">
+		<property name="lineMapper">
+			<bean class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
+				<property name="lineTokenizer">
+					<bean class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
+						<property name="delimiter" value=" "/>
+					</bean>
+				</property>
+				<property name="fieldSetMapper">
+					<bean class="io.spring.batch.SimilaritiesFieldSetMapper"/>
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="itemProcessor" class="io.spring.batch.NormalizationItemProcessor"/>
+
+	<bean id="itemWriter" class="io.spring.batch.JdbcSimilaritiesItemWriter">
+		<constructor-arg ref="dataSource"/>
+	</bean>
+
+	<bean id="hadoopFs" class="org.springframework.data.hadoop.fs.FileSystemFactoryBean">
+		<property name="configuration" ref="hadoopConfiguration"/>
+	</bean>
+
+	<hdp:configuration register-url-handler="false" properties-location="${xd.config.home}/hadoop.properties">
+		fs.defaultFS=hdfs://localhost:8020
+	</hdp:configuration>
+	<hdp:resource-loader id="hadoopResourceLoader"/>
+
+	<bean id="defaultResourceLoader" class="org.springframework.data.hadoop.fs.CustomResourceLoaderRegistrar">
+		<property name="loader" ref="hadoopResourceLoader"/>
+	</bean>
+
+</beans>

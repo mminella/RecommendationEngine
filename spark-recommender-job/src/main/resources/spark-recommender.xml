@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+                    http://www.springframework.org/schema/beans/spring-beans.xsd
+					http://www.springframework.org/schema/batch
+	                http://www.springframework.org/schema/batch/spring-batch.xsd">
+
+	<bean id="sparkJob" class="org.springframework.batch.core.step.tasklet.SystemCommandTasklet">
+		<property name="command" value="./mahout spark-itemsimilarity -i hdfs://localhost:8020/xd/hdfsImport/*.csv -o hdfs://localhost:8020/xd/hdfsImport/results"/>
+		<property name="timeout" value="3600000"/>
+		<property name="workingDirectory" value="/Users/mminella/Documents/IntelliJWorkspace/mahout/bin"/>
+	</bean>
+
+ 	<job id="job" xmlns="http://www.springframework.org/schema/batch">
+		<step id="step1">
+			<tasklet ref="sparkJob"/>
+		</step>
+	</job>
+</beans>

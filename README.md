@@ -1,4 +1,4 @@
-### Recommendation Engine
+## Recommendation Engine
 ---
 This project is intended to implement a simple recommendation engine for use with StackOverflow data.  The code and instructions here will allow you to:
 
@@ -12,17 +12,18 @@ A number of projects from the Spring portfolio were used to construct this demo.
 
 The idea for this demo and help with some of the code came from the blog post [Deploying a massively scalable recommender system with Apache Mahout](http://ssc.io/deploying-a-massively-scalable-recommender-system-with-apache-mahout/).
 
-#### Prerequisites for running this project
----
-1. **Hadoop installed** - I used Hadoop 1.2.1 but any version supported by [Spring for Apache Hadoop](http://projects.spring.io/spring-hadoop/) should work.
-2. **Spring XD installed** - This has been tested against the current SNAPSHOT of Spring XD as of the writing of this document.  *It needs the code in Spring XD's PR 729 [PR 729](https://github.com/spring-projects/spring-xd/pull/729) or equivelant to work*.
-3. **A database** - The SQL script provided and the POM file's dependencies are set up for MySQL, but there is nothing code specific that would prevent you from updating the scripts and dropping in a new driver.
-4. **The StackOverflow Data** - The data used in this project comes from the quarterly dump of StackExcahnge's data.  You can find a link to the torrent to download it here: [StackExchange Data](https://archive.org/details/stackexchange) and information about the schema of the data here: [StackExchange data schema](http://meta.stackoverflow.com/questions/2677/database-schema-documentation-for-the-public-data-dump-and-sede).
-5. **Configure the database connection** - The below instructions assume you have updated the two application.properties files in this project to point to your MySql instance.  The location of those two properties files are: database-import/src/main/resources and spring-overflow-spring/src/main/resources.
-6. **Version of Mahout that runs with Hadoop 2.x** - Mahout 0.9 currently only works with Hadoop 1.2 yet Spring XD requires Hadoop 2.x or higher.  To run this project, you'll need to checkout and build the latest version of Mahout (assuming you aren't using their 1.0 release).  You can find information on building Mahout here: [Build Mahout](http://stackoverflow.com/questions/18767843/how-can-i-compile-using-mahout-for-hadoop-2-0/24745296#24745296)
+### Prerequisites for running this project
 
-#### Potential cleanup before process
----
+1. **Hadoop installed** - I used Hadoop 1.2.1 but any version supported by [Spring for Apache Hadoop](http://projects.spring.io/spring-hadoop/) should work.  
+2. **Spring XD installed** - This project works best on the latest release of Spring XD (1.0.0.RELEASE as of this writing).  
+3. **A database** - The SQL script provided and the POM file's dependencies are set up for MySQL, but there is nothing code specific that would prevent you from updating the scripts and dropping in a new driver.  
+4. **The StackOverflow Data** - The data used in this project comes from the quarterly dump of StackExcahnge's data.  You can find a link to the torrent to download it here: [StackExchange Data](https://archive.org/details/stackexchange) and information about the schema of the data here: [StackExchange data schema](http://meta.stackoverflow.com/questions/2677/database-schema-documentation-for-the-public-data-dump-and-sede).  
+5. **Configure the database connection** - The below instructions assume you have updated the two application.properties files in this project to point to your MySql instance.  The location of those two properties files are: database-import/src/main/resources and spring-overflow-spring/src/main/resources.  
+6. **Version of Mahout that runs with Hadoop 2.x** - Mahout 0.9 currently only works with Hadoop 1.2 yet Spring XD requires Hadoop 2.x or higher.  To run this project, you'll need to checkout and build the latest version of Mahout (assuming you aren't using their 1.0 release).  You can find information on building Mahout here: [Build Mahout](http://stackoverflow.com/questions/18767843/how-can-i-compile-using-mahout-for-hadoop-2-0/24745296#24745296)  
+   '$ mvn clean install -Dhadoop2 -Dhadoop2.version=2.2.0 -DskipTests=true'
+
+### Potential cleanup before process
+
 If you've run this project before, you'll need to do a bit of cleanup.  Specifically, you'll want to drop and recreate the database as well as clean up the directories in Hadoop.  This demo is *not* developed for back to back runs and will fail if this cleanup is not performed between them.
 
 1. Remove old Hadoop data by deleting the two directories used: `$ hadoop fs -rmr /xd/hdfsImport`
@@ -36,11 +37,11 @@ If you've run this project before, you'll need to do a bit of cleanup.  Specific
     
 **Troubleshooting**
 
-*Unable to delete directories due to Hadoop being in safe mode* - Execute the command: `$ hadoop dfsadmin -safemode leave`
+*Unable to delete directories due to Hadoop being in safe mode* - Execute the command: `$ hadoop dfsadmin -safemode leave`  
 *Unable to connect to Hadoop: `$ hadoop/sbin/hadoop-daemon.sh start namenode -format`
 
 #### Import of StackOverflow data
----
+
 Before running the website or the job, you'll need to download and import the data.  The data is provided via XML files that will be imported via a [Spring Batch](http://spring.io/projects/spring-batch) job.
 
 1. Build the project by running `$ mvn package` from the root of the repository (same place this file is located).
@@ -51,8 +52,12 @@ Before running the website or the job, you'll need to download and import the da
 
 *Unable to connect to the database* - Update the values in the application.properties file located in database-import/src/main/resources to be correct for your database instance.
 
-#### Ingest data into Hadoop
+### MapReduce Version
 ---
+For the processing of the data by Mahout, there are two versions.  The first is via MapReduce.  The second is via Spark.  This section walks you through the MapReduce version.
+
+#### Ingest data into Hadoop
+
 To injest the data from the database into HDFS so that it can be processed on Hadoop, we'll use [Spring XD](http://spring.io/projects/spring-xd).  Spring XD provides a number of pre-packaged Spring Batch jobs that can be used to do common tasks.  In this case, we'll be using the jdbchdfs job to pipe data from a database to HDFS.
 
 1. Start Hadoop (see the instructions for your installation for information on this).
@@ -79,7 +84,7 @@ To injest the data from the database into HDFS so that it can be processed on Ha
     ```
 
 #### Execute Mahout ItemSimilarityJob
----
+
 If you execute the maven build before, you already will have the packaged job to be deployed onto Spring XD.  If not, execute a maven package (`$ mvn package`) from either the root of the project (the same directory this file is located in) or the root of the recommender job module (recommender-job).
 
 1. Copy the zip file (recommender-recommender.zip) from recommender-job/target to the `<XD_HOME>/modules/jobs` directory.
@@ -100,10 +105,9 @@ If you execute the maven build before, you already will have the packaged job to
     ```
 
 #### Import job results into db
----
 Once the data has been preprocessed on Hadoop, we'll move the results into the database for use by the website using Spring XD.
 
-1. From the Spring XD shell, create a the new job.  It's important to note that in order for this job to work correctly, the code in Spring XD [PR 729](https://github.com/spring-projects/spring-xd/pull/729) be included or equivilent.  Without this, the hdfsjdbc job won't support tab delimited files.
+1. From the Spring XD shell, create a the new job. 
 
     ```
     xd:> job create hdfsExport --definition "hdfsjdbc --resources=/xd/hdfsImport/postsResults/part-r-* --names=item_id_a,item_id_b,similarity --tableName=taste_item_similarity --delimiter='\t'" --deploy
@@ -124,9 +128,66 @@ Once the data has been preprocessed on Hadoop, we'll move the results into the d
     +----------+
     1 row in set (0.14 sec)
      ```
+ 
+### Spark Version
+---
+Mahout is "all in" on Spark.  They have tagged all of their algorithms implemented via MapReduce as legacy.  In it's place, they have chosen Spark as the platform of choice to run their algorithms on.  As of the writing of this README, while the Spark implementations can recreate the generation of the model, the model is different and Mahout does not provide a Recommender that uses it.  Their vision is to use a search engine like Solr to provide the recommendations.  While they are developing a Recommender as well, in the future, we'll need to massage the data to use the existing Recommenders.
+
+#### Ingest data into Hadoop
+
+The Spark version of the item-similarity job takes the same input as the MapReduce version so there is no difference here.  See the above instructions for the ingestion piece.
+
+
+#### Execute Mahout Spark ItemSimilarityJob
+
+If you execute the maven build before, you already will have the packaged job to be deployed onto Spring XD.  If not, execute a maven package (`$ mvn package`) from either the root of the project (the same directory this file is located in) or the root of the spark recommender job module (spark-recommender-job).
+
+1. Copy the zip file (spark-recommender-spark-recommender.zip) from spark-recommender-job/target to the `<XD_HOME>/modules/jobs` directory.
+2. From the Spring XD shell, create the new job
+
+    ```
+    xd:> job create mahout-spark --definition "spark-recommender" --deploy
+    ```
+3. From the XD shell, launch the job:
+
+    ```
+    xd:> job launch mahout-spark
+    ```
+4. Verify the output:
+
+    ```
+    $ hadoop fs -ls /xd/hdfsImport/results
+    ```
+    
+#### Import job results into db
+Once the data has been preprocessed on Hadoop, we'll move the results into the database for use by the website using Spring XD and Spring Batch.  Unfortunately, due to the new 
+
+1. Copy the zip file (spark-import-job-spark-import-job.zip) from spark-import-job/target to the `<XD_HOME>/modules/jobs` directory.
+2. From the Spring XD shell, create the new job
+
+    ```
+    xd:> job create import-spark --definition "spark-import-job" --deploy
+    ```
+3. From the XD shell, launch the job:
+
+    ```
+    xd:> job launch import-spark
+    ```
+4. Verify the output:
+
+    ```
+    mysql> select count(*) from taste_item_similarity;
+    +----------+
+    | count(*) |
+    +----------+
+    |    81217 |
+    +----------+
+    1 row in set (0.14 sec)
+     ```
+
+
 
 #### Launch the website
----
 With the offline data processed, we can launch the website, browse the questions and answers, as well as see the recommendations in action.
 
 1. From the root of this project (assuming you've run the `$ mvn package` previously), run `$ java -jar spring-overflow-spring/target/spring-overflow-spring-1.0-SNAPSHOT.war`.  This application is packaged as a WAR file and can be deployed to Tomcat, but should also work as a Spring Boot executable JAR file.

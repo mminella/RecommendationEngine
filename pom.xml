@@ -21,6 +21,9 @@
 	<modules>
         <module>database-import</module>
         <module>recommender-job</module>
+		<module>spark-import-job</module>
+		<module>spark-recommender-job</module>
+		<module>jdbchdfspartitioned</module>
 		<module>spring-overflow-spring</module>
     </modules>
 	<repositories>
