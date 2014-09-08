@@ -10,7 +10,7 @@ This project is intended to implement a simple recommendation engine for use wit
 
 A number of projects from the Spring portfolio were used to construct this demo.  You can find more information about them on [spring.io](http://spring.io).
 
-The idea for this demo and help with some of the code came from the blog post [Deploying a massively scalable recommender system with Apache Mahout](http://ssc.io/deploying-a-massively-scalable-recommender-system-with-apache-mahout/).
+The idea for this demo and help with some of the code came from the blog post [Deploying a massively scalable recommender system with Apache Mahout](http://ssc.io/deploying-a-massively-scalable-recommender-system-with-apache-mahout/).  Further help and insight was provided by Pat Ferrel [http://occamsmachete.com/ml/](http://occamsmachete.com/ml/).
 
 ### Prerequisites for running this project
 
