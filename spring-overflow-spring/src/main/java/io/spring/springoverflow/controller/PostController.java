@@ -101,14 +101,18 @@ public class PostController {
 
 		postRepository.save(parentPost);
 
-		List<RecommendedItem> items = recommendItems(currentUser);
+		List<RecommendedItem> items;
 		List<Post> matchingPosts = new ArrayList<>();
 
-		for (RecommendedItem item : items) {
-			List<Post> posts = postRepository.findByTagId(item.getItemID(), new PageRequest(0, 3));
+		// Recommendations by Question's Tags
+		matchingPosts.addAll(recommendPostsByItemsTags(parentPost));
 
-			matchingPosts.addAll(posts);
-		}
+		// Recommendations by User's History
+		matchingPosts.addAll(recommendPostsByUsers(currentUser));
+
+		// Recommendations By Both
+		matchingPosts.addAll(recommendPostsByUsers(currentUser));
+		matchingPosts.addAll(recommendPostsByItemsTags(parentPost));
 
 		if(matchingPosts.size() < 3) {
 			items = recommendItems(parentPost.getTags());
@@ -135,8 +139,35 @@ public class PostController {
 		return "post/show";
 	}
 
-	private List<RecommendedItem> recommendItems(User user) throws Exception {
-		return recommender.recommend(user.getId(), 10);
+	private List<Post> recommendPostsByItemsTags(Post parentPost) throws Exception {
+		List<RecommendedItem> items = new ArrayList<>();
+
+		for (Tag tag : parentPost.getTags()) {
+			items.addAll(recommender.mostSimilarItems(tag.getId(),10));
+		}
+
+		List<Post> matchingPosts = new ArrayList<>();
+
+		for (RecommendedItem item : items) {
+			List<Post> posts = postRepository.findByTagId(item.getItemID(), new PageRequest(0, 3));
+
+			matchingPosts.addAll(posts);
+		}
+
+		return matchingPosts;
+	}
+
+	private List<Post> recommendPostsByUsers(User user) throws Exception {
+		List<RecommendedItem> items = recommender.recommend(user.getId(), 10);
+		List<Post> matchingPosts = new ArrayList<>();
+
+		for (RecommendedItem item : items) {
+			List<Post> posts = postRepository.findByTagId(item.getItemID(), new PageRequest(0, 3));
+
+			matchingPosts.addAll(posts);
+		}
+
+		return matchingPosts;
 	}
 
 	private List<RecommendedItem> recommendItems(Set<Tag> tags) throws Exception {
