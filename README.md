@@ -38,7 +38,7 @@ If you've run this project before, you'll need to do a bit of cleanup.  Specific
 **Troubleshooting**
 
 *Unable to delete directories due to Hadoop being in safe mode* - Execute the command: `$ hadoop dfsadmin -safemode leave`  
-*Unable to connect to Hadoop: `$ hadoop/sbin/hadoop-daemon.sh start namenode -format`
+*Unable to connect to Hadoop: `$ hadoop/sbin/hadoop-daemon.sh start namenode -format` or `$ hadoop namenode -format`
 
 #### Import of StackOverflow data
 
@@ -156,7 +156,7 @@ If you execute the maven build before, you already will have the packaged job to
 4. Verify the output:
 
     ```
-    $ hadoop fs -ls /xd/hdfsImport/results
+    $ hadoop fs -ls /xd/hdfsImport/results/indicator-matrix
     ```
     
 #### Import job results into db
@@ -195,4 +195,8 @@ With the offline data processed, we can launch the website, browse the questions
 3. From here, you can navigate around viewing questions, answers, and comments.
 4. To answer a question and see the recommendations, you'll need to login.  Click the Login link in the upper right hand corner.  Enter any username from the database.  The password is hard coded to be password.
 5. Once you are logged in, you will be able to navigate to a question and answer it.  Once you submit your answer, up to three additional questions will be recommended on the question page at the top.
+
+Validation query for user's history based recommendations:  
+`mysql> select u.display_name, t.tag from taste_preferences tp inner join users u on u.id = tp.user_id left outer join tag t on tp.item_id = t.id where u.display_name = 'rayman';`
+
 

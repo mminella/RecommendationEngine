@@ -108,11 +108,11 @@ public class PostController {
 		matchingPosts.addAll(recommendPostsByItemsTags(parentPost));
 
 		// Recommendations by User's History
-		matchingPosts.addAll(recommendPostsByUsers(currentUser));
+//		matchingPosts.addAll(recommendPostsByUsers(currentUser));
 
 		// Recommendations By Both
-		matchingPosts.addAll(recommendPostsByUsers(currentUser));
-		matchingPosts.addAll(recommendPostsByItemsTags(parentPost));
+//		matchingPosts.addAll(recommendPostsByUsers(currentUser));
+//		matchingPosts.addAll(recommendPostsByItemsTags(parentPost));
 
 		if(matchingPosts.size() < 3) {
 			items = recommendItems(parentPost.getTags());
