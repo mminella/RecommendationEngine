@@ -19,6 +19,12 @@
     </properties>
 
     <dependencies>
+		<dependency>
+			<groupId>org.springframework.batch</groupId>
+			<artifactId>spring-batch-core</artifactId>
+			<version>3.0.1.RELEASE</version>
+			<scope>provided</scope>
+		</dependency>
         <dependency>
             <groupId>org.apache.mahout</groupId>
             <artifactId>mahout-mrlegacy</artifactId>

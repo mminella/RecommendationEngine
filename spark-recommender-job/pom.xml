@@ -14,6 +14,15 @@
 		<version>1.0.1.RELEASE</version>
 	</parent>
 
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.batch</groupId>
+			<artifactId>spring-batch-core</artifactId>
+			<version>3.0.1.RELEASE</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
     <properties>
 		<mahout.version>1.0-SNAPSHOT</mahout.version>
     </properties>
